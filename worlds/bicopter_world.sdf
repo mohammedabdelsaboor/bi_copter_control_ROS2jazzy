@@ -11,13 +11,12 @@ Key World Features:
 1. Spacious Flight Net Cage:
    - 14m x 14m x 6m aluminum box-truss protective flight enclosure with fine netting.
    - 100% open and unobstructed interior volume centered at origin (0, 0, 0).
-2. Central Precision Launch Pad:
-   - ArUco fiducials, concentric aiming rings, and high-visibility landing markers.
+2. Clean Plain Ground Floor:
+   - Completely clean, smooth, uniform floor with zero drawings, decals, or grid lines.
 3. Realistic MoCap System:
    - 16 OptiTrack / Vicon optical motion capture cameras with glowing red IR rings.
 4. Laboratory Setting:
-   - Polished dark epoxy floor with 1m metric grid lines.
-   - Operator command console and university research whiteboard safely outside the cage.
+   - Polished solid floor, research whiteboard, and operator command console safely outside.
 5. Physics Engine Settings:
    - Gazebo Harmonic 500 Hz physics update rate (2ms time step).
    - Complete sensor plugins: IMU, Barometer (Air Pressure), Magnetometer, and NavSat.
@@ -100,64 +99,16 @@ Key World Features:
           <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface>
         </collision>
 
-        <!-- Polished Dark Reflective Epoxy Floor -->
+        <!-- Clean Plain Solid Floor (Zero markings, lines, or decals) -->
         <visual name="floor_epoxy">
           <pose>0 0 0 0 0 0</pose>
           <geometry><plane><normal>0 0 1</normal><size>26 24</size></plane></geometry>
           <material>
-            <ambient>0.20 0.22 0.25 1</ambient>
-            <diffuse>0.22 0.24 0.27 1</diffuse>
-            <specular>0.45 0.45 0.50 1</specular>
+            <ambient>0.22 0.24 0.27 1</ambient>
+            <diffuse>0.24 0.26 0.29 1</diffuse>
+            <specular>0.20 0.20 0.20 1</specular>
           </material>
         </visual>
-
-        <!-- Inner Flight Arena Base Mat (14.2m x 14.2m Centered at 0, 0) -->
-        <visual name="arena_mat">
-          <pose>0 0 0.001 0 0 0</pose>
-          <geometry><box><size>14.2 14.2 0.001</size></box></geometry>
-          <material>
-            <ambient>0.13 0.14 0.16 1</ambient>
-            <diffuse>0.14 0.15 0.17 1</diffuse>
-            <specular>0.25 0.25 0.25 1</specular>
-          </material>
-        </visual>
-
-        <!-- Safety Hazard Yellow/Black Perimeter Border around Net Base -->
-        <visual name="border_n"><pose>0 7.1 0.003 0 0 0</pose><geometry><box><size>14.2 0.18 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
-        <visual name="border_s"><pose>0 -7.1 0.003 0 0 0</pose><geometry><box><size>14.2 0.18 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
-        <visual name="border_e"><pose>7.1 0 0.003 0 0 0</pose><geometry><box><size>0.18 14.2 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
-        <visual name="border_w"><pose>-7.1 0 0.003 0 0 0</pose><geometry><box><size>0.18 14.2 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
-
-        <!-- Metric Optical Tracking Grid (1m grid lines spanning entire flight arena) -->
-        <!-- Longitudinal lines (X-axis) -->
-        <visual name="gx_m6"><pose>-6 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_m5"><pose>-5 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_m4"><pose>-4 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_m3"><pose>-3 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_m2"><pose>-2 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_m1"><pose>-1 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_0"><pose>0 0 0.002 0 0 0</pose><geometry><box><size>0.05 14.0 0.001</size></box></geometry><material><ambient>0.85 0.9 0.95 1</ambient><diffuse>0.85 0.9 0.95 1</diffuse></material></visual>
-        <visual name="gx_p1"><pose>1 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_p2"><pose>2 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_p3"><pose>3 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_p4"><pose>4 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_p5"><pose>5 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gx_p6"><pose>6 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-
-        <!-- Lateral lines (Y-axis) -->
-        <visual name="gy_m6"><pose>0 -6 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_m5"><pose>0 -5 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_m4"><pose>0 -4 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_m3"><pose>0 -3 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_m2"><pose>0 -2 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_m1"><pose>0 -1 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_0"><pose>0 0 0.002 0 0 0</pose><geometry><box><size>14.0 0.05 0.001</size></box></geometry><material><ambient>0.85 0.9 0.95 1</ambient><diffuse>0.85 0.9 0.95 1</diffuse></material></visual>
-        <visual name="gy_p1"><pose>0 1 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_p2"><pose>0 2 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_p3"><pose>0 3 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_p4"><pose>0 4 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_p5"><pose>0 5 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
-        <visual name="gy_p6"><pose>0 6 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
 
         <!-- North Laboratory Acoustic Wall -->
         <collision name="wall_n_col"><pose>0 10.0 2.0 0 0 0</pose><geometry><box><size>24.0 0.25 4.0</size></box></geometry></collision>
@@ -371,69 +322,7 @@ Key World Features:
       </link>
     </model>
 
-    <!-- ==================== Primary Central Launch & Landing Pad A (Centered at 0, 0) ==================== -->
-    <model name="primary_helipad_a">
-      <static>true</static>
-      <pose>0 0 0.005 0 0 0</pose>
-      <link name="link">
-        <collision name="pad_col">
-          <geometry><cylinder><radius>1.2</radius><length>0.01</length></cylinder></geometry>
-        </collision>
 
-        <!-- Base Platform -->
-        <visual name="base_plate">
-          <geometry><cylinder><radius>1.2</radius><length>0.01</length></cylinder></geometry>
-          <material><ambient>0.12 0.14 0.16 1</ambient><diffuse>0.12 0.14 0.16 1</diffuse></material>
-        </visual>
-
-        <!-- Outer Precision Ring (Cyan) -->
-        <visual name="outer_cyan_ring">
-          <pose>0 0 0.001 0 0 0</pose>
-          <geometry><cylinder><radius>1.14</radius><length>0.01</length></cylinder></geometry>
-          <material><ambient>0 0.75 0.95 1</ambient><diffuse>0 0.75 0.95 1</diffuse></material>
-        </visual>
-
-        <!-- Intermediate Dark Ring -->
-        <visual name="mid_dark_ring">
-          <pose>0 0 0.002 0 0 0</pose>
-          <geometry><cylinder><radius>1.02</radius><length>0.01</length></cylinder></geometry>
-          <material><ambient>0.12 0.14 0.16 1</ambient><diffuse>0.12 0.14 0.16 1</diffuse></material>
-        </visual>
-
-        <!-- Inner Touchdown Ring (White) -->
-        <visual name="inner_white_ring">
-          <pose>0 0 0.003 0 0 0</pose>
-          <geometry><cylinder><radius>0.88</radius><length>0.01</length></cylinder></geometry>
-          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
-        </visual>
-
-        <!-- Center Deck Platform -->
-        <visual name="center_deck">
-          <pose>0 0 0.004 0 0 0</pose>
-          <geometry><cylinder><radius>0.80</radius><length>0.01</length></cylinder></geometry>
-          <material><ambient>0.15 0.17 0.20 1</ambient><diffuse>0.15 0.17 0.20 1</diffuse></material>
-        </visual>
-
-        <!-- Optical Crosshair Calibration Reticle -->
-        <visual name="crosshair_x"><pose>0 0 0.005 0 0 0</pose><geometry><box><size>1.8 0.035 0.01</size></box></geometry><material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material></visual>
-        <visual name="crosshair_y"><pose>0 0 0.005 0 0 0</pose><geometry><box><size>0.035 1.8 0.01</size></box></geometry><material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material></visual>
-
-        <!-- Bold Yellow "H" Marking -->
-        <visual name="h_bar_l"><pose>0 0.26 0.006 0 0 0</pose><geometry><box><size>0.70 0.11 0.01</size></box></geometry><material><ambient>1 0.85 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
-        <visual name="h_bar_r"><pose>0 -0.26 0.006 0 0 0</pose><geometry><box><size>0.70 0.11 0.01</size></box></geometry><material><ambient>1 0.85 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
-        <visual name="h_cross"><pose>0 0 0.006 0 0 0</pose><geometry><box><size>0.11 0.52 0.01</size></box></geometry><material><ambient>1 0.85 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
-
-        <!-- North Alignment Arrow (Safety Orange) -->
-        <visual name="arrow_stem"><pose>0.96 0 0.006 0 0 0</pose><geometry><box><size>0.26 0.07 0.01</size></box></geometry><material><ambient>0.95 0.4 0 1</ambient><diffuse>0.95 0.4 0 1</diffuse></material></visual>
-        <visual name="arrow_head"><pose>1.08 0 0.006 0 0 0.785</pose><geometry><box><size>0.14 0.14 0.01</size></box></geometry><material><ambient>0.95 0.4 0 1</ambient><diffuse>0.95 0.4 0 1</diffuse></material></visual>
-
-        <!-- 4 Optical ArUco / Target Alignment Squares -->
-        <visual name="tag_ne"><pose>0.72 0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
-        <visual name="tag_nw"><pose>0.72 -0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
-        <visual name="tag_se"><pose>-0.72 0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
-        <visual name="tag_sw"><pose>-0.72 -0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
-      </link>
-    </model>
 
     <!-- ==================== Clean Ground Station Outside the Net ==================== -->
     <model name="ground_control_center">
@@ -479,7 +368,7 @@ Key World Features:
       </link>
     </model>
 
-    <!-- ==================== The Bi-Copter Drone Model (Spawns on Central Pad) ==================== -->
+    <!-- ==================== The Bi-Copter Drone Model (Spawns on Ground) ==================== -->
     <include>
       <uri>model://bi_copter</uri>
       <name>bi_copter</name>
