@@ -1,0 +1,427 @@
+<?xml version="1.0"?>
+<!--
+================================================================================
+BI-COPTER GAZEBO SIMULATION MODEL (SDF: model.sdf)
+================================================================================
+
+Hello! This SDF file defines the 3D physical and aerodynamic simulation model
+for our dual-tilt bi-copter in Gazebo Sim (Harmonic).
+
+Aerodynamics & Motor Dynamics:
+- Uses `gz::sim::systems::MulticopterMotorModel` for each rotor.
+  Thrust: F = motorConstant * w^2   (directed along the propeller link +Z spin axis)
+  Drag Torque: M = momentConstant * F (rotor reaction torque)
+- Motor 0 (Left): spins Counter-Clockwise (CCW).
+- Motor 1 (Right): spins Clockwise (CW).
+
+Tilt Servo Mechanics:
+- Driven by `gz::sim::systems::JointPositionController` with velocity saturation.
+  Accurately emulates fast, high-torque digital RC servos.
+- Servo 0 (Left) tilts about +Y axis (revolute joint `left_tilt_joint`).
+- Servo 1 (Right) tilts about +Y axis (revolute joint `right_tilt_joint`).
+  * Positive angle tilts thrust forward (+X).
+
+Sensor Suite & PX4 Standard Interfaces:
+- IMU: 250 Hz accelerometer & gyroscope.
+- Barometer (Air Pressure): Altimeter simulation.
+- Magnetometer: 3-axis compass for yaw heading.
+- NavSat: GPS receiver for geospatial positioning.
+
+Compatible with both our pure-Python/ROS 2 flight controller and PX4 SITL!
+================================================================================
+-->
+<sdf version="1.9">
+  <model name="bi_copter">
+    <self_collide>false</self_collide>
+
+    <!-- ===================================================================== -->
+    <!-- base_link = 650 mm rod + central bracket (L1) lumped together          -->
+    <!-- ===================================================================== -->
+    <link name="base_link">
+      <inertial>
+        <pose>-2.5277653200474099e-05 0.00010758099893504231 0.01852242512855103 0 0 0</pose>
+        <mass>0.30996513132738002</mass>
+        <inertia>
+          <ixx>0.00031301646254294779</ixx>
+          <ixy>6.2788424150946687e-10</ixy>
+          <ixz>1.081040236390575e-07</ixz>
+          <iyy>0.0048290927913827207</iyy>
+          <iyz>-4.6008776051197722e-07</iyz>
+          <izz>0.0048874289798044633</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="rod_collision">
+        <pose>0 0 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.65</length>
+            <radius>0.0125</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name="frame_collision">
+        <pose>0 0 0.024 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.080 0.380 0.108</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.8</mu>
+              <mu2>0.8</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <visual name="rod_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bi_copter_control/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.85 0.85 0.88 1</ambient>
+          <diffuse>0.85 0.85 0.88 1</diffuse>
+          <specular>0.3 0.3 0.3 1</specular>
+        </material>
+      </visual>
+      <visual name="frame_visual">
+        <pose>-0.018826754531935299 0.065712117311469406 -0.032330032422266598 1.5707963267949003 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bi_copter_control/meshes/L1.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.25 0.35 0.75 1</ambient>
+          <diffuse>0.25 0.35 0.75 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+
+      <!-- ===================== sensors (PX4 compatible names) ===================== -->
+      <sensor name="imu_sensor" type="imu">
+        <always_on>1</always_on>
+        <update_rate>250</update_rate>
+        <imu>
+          <angular_velocity>
+            <x><noise type="gaussian"><mean>0</mean><stddev>0.0003394</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0</mean><stddev>0.0003394</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0</mean><stddev>0.0003394</stddev></noise></z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x><noise type="gaussian"><mean>0</mean><stddev>0.004</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0</mean><stddev>0.004</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0</mean><stddev>0.004</stddev></noise></z>
+          </linear_acceleration>
+        </imu>
+      </sensor>
+      <sensor name="air_pressure_sensor" type="air_pressure">
+        <always_on>1</always_on>
+        <update_rate>50</update_rate>
+        <air_pressure>
+          <pressure>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </pressure>
+        </air_pressure>
+      </sensor>
+      <sensor name="magnetometer_sensor" type="magnetometer">
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <magnetometer>
+          <x><noise type="gaussian"><stddev>0.0001</stddev></noise></x>
+          <y><noise type="gaussian"><stddev>0.0001</stddev></noise></y>
+          <z><noise type="gaussian"><stddev>0.0001</stddev></noise></z>
+        </magnetometer>
+      </sensor>
+      <sensor name="navsat_sensor" type="navsat">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+    </link>
+
+    <!-- ===================================================================== -->
+    <!-- LEFT tilt servo (L2) + LEFT propeller (L4)                             -->
+    <!-- ===================================================================== -->
+    <joint name="left_tilt_joint" type="revolute">
+      <pose relative_to="base_link">1.4187440185199631e-05 0.141 0.068 1.5707963267948966 0 -3.1415926535897931</pose>
+      <parent>base_link</parent>
+      <child>left_tilt_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.5236</lower>
+          <upper>0.5236</upper>
+          <effort>2</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.0005</damping>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="left_tilt_link">
+      <pose relative_to="left_tilt_joint">0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.00063945180121196903 0.041985470493005599 0.020285614781496202 0 0 0</pose>
+        <mass>0.075691766021955195</mass>
+        <inertia>
+          <ixx>1.3600308887235101e-05</ixx>
+          <ixy>-3.4890522252550501e-07</ixy>
+          <ixz>-6.7102637749309396e-07</ixz>
+          <iyy>1.61394826592292e-05</iyy>
+          <iyz>-1.5868331703718001e-07</iyz>
+          <izz>1.35431982502197e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="left_tilt_collision">
+        <pose>0.0095 0.0447 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.069 0.114 0.040</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="left_tilt_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bi_copter_control/meshes/L2.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="left_prop_joint" type="revolute">
+      <pose relative_to="left_tilt_link">0 0.069843467743183105 0.020000485194281398 -1.5707963267948966 0 0</pose>
+      <parent>left_tilt_link</parent>
+      <child>left_prop_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="left_prop_link">
+      <pose relative_to="left_prop_joint">0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0.00805127 0 0 0</pose>
+        <mass>0.0097604906464946097</mass>
+        <inertia>
+          <!-- symmetric approximation of the CAD prop inertia (spin axis = z) -->
+          <ixx>1.06e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.06e-05</iyy>
+          <iyz>0</iyz>
+          <izz>2.0957e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_prop_visual">
+        <pose>0 0 0 1.5707963267948966 0 2.997185</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bi_copter_control/meshes/L4.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================================================================== -->
+    <!-- RIGHT tilt servo (L3) + RIGHT propeller (L5)                           -->
+    <!-- ===================================================================== -->
+    <joint name="right_tilt_joint" type="revolute">
+      <pose relative_to="base_link">-1.4187440185397389e-05 -0.181 0.068 1.5707963267948966 0 3.1415926535897931</pose>
+      <parent>base_link</parent>
+      <child>right_tilt_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.5236</lower>
+          <upper>0.5236</upper>
+          <effort>2</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.0005</damping>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="right_tilt_link">
+      <pose relative_to="right_tilt_joint">0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.00064205813207651903 0.041983366078535499 0.019708290626908199 0 0 0</pose>
+        <mass>0.075705437464590894</mass>
+        <inertia>
+          <ixx>1.3602712306349e-05</ixx>
+          <ixy>-3.4994473258598198e-07</ixy>
+          <ixz>6.8176489825761397e-07</ixz>
+          <iyy>1.61425065106366e-05</iyy>
+          <iyz>1.6248376995028801e-07</iyz>
+          <izz>1.35454251706912e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="right_tilt_collision">
+        <pose>0.0095 0.0447 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.069 0.114 0.040</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="right_tilt_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bi_copter_control/meshes/L3.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="right_prop_joint" type="revolute">
+      <pose relative_to="right_tilt_link">0 0.069843467743182994 0.020000485194281398 -1.5707963267948966 0 0</pose>
+      <parent>right_tilt_link</parent>
+      <child>right_prop_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="right_prop_link">
+      <pose relative_to="right_prop_joint">0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0.00805127 0 0 0</pose>
+        <mass>0.0097605620215964004</mass>
+        <inertia>
+          <ixx>1.06e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.06e-05</iyy>
+          <iyz>0</iyz>
+          <izz>2.0958e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_prop_visual">
+        <pose>0 0 0 1.5707963267948966 0 -3.14159265358979</pose>
+        <geometry>
+          <mesh>
+            <uri>model://bi_copter_control/meshes/L5.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ===================================================================== -->
+    <!-- Motor / propeller thrust model                                         -->
+    <!--   10x5.5 prop: kF = 6.0e-6 N/(rad/s)^2  -> 6 N max thrust @ 1000 rad/s -->
+    <!--   kM = 0.016 m  (drag torque = kM * thrust)                            -->
+    <!-- ===================================================================== -->
+    <plugin filename="gz-sim-multicopter-motor-model-system"
+            name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>bi_copter</robotNamespace>
+      <jointName>left_prop_joint</jointName>
+      <linkName>left_prop_link</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1000.0</maxRotVelocity>
+      <motorConstant>6.0e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <actuator_number>0</actuator_number>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin filename="gz-sim-multicopter-motor-model-system"
+            name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>bi_copter</robotNamespace>
+      <jointName>right_prop_joint</jointName>
+      <linkName>right_prop_link</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1000.0</maxRotVelocity>
+      <motorConstant>6.0e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <actuator_number>1</actuator_number>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <!-- ===================================================================== -->
+    <!-- Tilt servos: velocity-limited position servos (~0.1 s / 60 deg)        -->
+    <!-- ===================================================================== -->
+    <plugin filename="gz-sim-joint-position-controller-system"
+            name="gz::sim::systems::JointPositionController">
+      <joint_name>left_tilt_joint</joint_name>
+      <sub_topic>servo_0</sub_topic>
+      <use_velocity_commands>true</use_velocity_commands>
+      <cmd_max>10</cmd_max>
+      <cmd_min>-10</cmd_min>
+      <initial_position>0</initial_position>
+    </plugin>
+    <plugin filename="gz-sim-joint-position-controller-system"
+            name="gz::sim::systems::JointPositionController">
+      <joint_name>right_tilt_joint</joint_name>
+      <sub_topic>servo_1</sub_topic>
+      <use_velocity_commands>true</use_velocity_commands>
+      <cmd_max>10</cmd_max>
+      <cmd_min>-10</cmd_min>
+      <initial_position>0</initial_position>
+    </plugin>
+
+    <!-- ===================================================================== -->
+    <!-- State publishers (for ROS 2 / RViz)                                    -->
+    <!-- ===================================================================== -->
+    <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
+    </plugin>
+    <plugin filename="gz-sim-odometry-publisher-system"
+            name="gz::sim::systems::OdometryPublisher">
+      <dimensions>3</dimensions>
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <odom_publish_frequency>100</odom_publish_frequency>
+    </plugin>
+  </model>
+</sdf>

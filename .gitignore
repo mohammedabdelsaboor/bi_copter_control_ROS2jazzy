@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches & Test outputs
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ROS 2 & Colcon build directories (if ever built in-tree)
+build/
+install/
+log/
+COLCON_IGNORE
+*.log
+
+# Editor & OS temporary files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+*.bak

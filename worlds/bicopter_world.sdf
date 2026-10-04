@@ -1,0 +1,490 @@
+<?xml version="1.0" ?>
+<!--
+================================================================================
+BI-COPTER INDOOR RESEARCH FLIGHT ARENA (Gazebo World: bicopter_world.sdf)
+================================================================================
+
+Welcome to the Indoor Autonomous Drone Flight Research Laboratory!
+This world provides a safe, state-of-the-art testing arena for our bi-copter:
+
+Key World Features:
+1. Spacious Flight Net Cage:
+   - 14m x 14m x 6m aluminum box-truss protective flight enclosure with fine netting.
+   - 100% open and unobstructed interior volume centered at origin (0, 0, 0).
+2. Central Precision Launch Pad:
+   - ArUco fiducials, concentric aiming rings, and high-visibility landing markers.
+3. Realistic MoCap System:
+   - 16 OptiTrack / Vicon optical motion capture cameras with glowing red IR rings.
+4. Laboratory Setting:
+   - Polished dark epoxy floor with 1m metric grid lines.
+   - Operator command console and university research whiteboard safely outside the cage.
+5. Physics Engine Settings:
+   - Gazebo Harmonic 500 Hz physics update rate (2ms time step).
+   - Complete sensor plugins: IMU, Barometer (Air Pressure), Magnetometer, and NavSat.
+================================================================================
+-->
+<sdf version="1.9">
+  <world name="bicopter_world">
+
+    <!-- ==================== Physics & Environment ==================== -->
+    <physics name="2ms" type="ignored">
+      <max_step_size>0.002</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>500</real_time_update_rate>
+    </physics>
+
+    <gravity>0 0 -9.81</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+
+    <!-- Simulation Systems & Plugins -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <plugin filename="gz-sim-air-pressure-system" name="gz::sim::systems::AirPressure"/>
+    <plugin filename="gz-sim-magnetometer-system" name="gz::sim::systems::Magnetometer"/>
+    <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+
+    <!-- Clean, Bright Laboratory Scene -->
+    <scene>
+      <ambient>0.65 0.67 0.70 1</ambient>
+      <background>0.74 0.81 0.89 1</background>
+      <shadows>true</shadows>
+      <grid>false</grid>
+    </scene>
+
+    <!-- Default User Camera: Wide Isometric View into the Empty Flight Net -->
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <pose>0.0 -14.5 8.0 0 0.44 1.5708</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+
+    <!-- Primary Directional Lighting (Overhead Array) -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 25 0 0 0</pose>
+      <diffuse>0.92 0.94 0.96 1</diffuse>
+      <specular>0.35 0.35 0.35 1</specular>
+      <attenuation>
+        <range>150</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.30 0.20 -0.92</direction>
+    </light>
+
+    <!-- Secondary Soft Fill Light -->
+    <light type="directional" name="fill_light">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 20 0 0 0</pose>
+      <diffuse>0.45 0.48 0.52 1</diffuse>
+      <direction>0.30 -0.20 -0.80</direction>
+    </light>
+
+    <!-- ==================== Lab Facility Architecture & Floor ==================== -->
+    <model name="lab_facility">
+      <static>true</static>
+      <link name="link">
+        <!-- Floor Collision -->
+        <collision name="floor_col">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><plane><normal>0 0 1</normal><size>26 24</size></plane></geometry>
+          <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface>
+        </collision>
+
+        <!-- Polished Dark Reflective Epoxy Floor -->
+        <visual name="floor_epoxy">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><plane><normal>0 0 1</normal><size>26 24</size></plane></geometry>
+          <material>
+            <ambient>0.20 0.22 0.25 1</ambient>
+            <diffuse>0.22 0.24 0.27 1</diffuse>
+            <specular>0.45 0.45 0.50 1</specular>
+          </material>
+        </visual>
+
+        <!-- Inner Flight Arena Base Mat (14.2m x 14.2m Centered at 0, 0) -->
+        <visual name="arena_mat">
+          <pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>14.2 14.2 0.001</size></box></geometry>
+          <material>
+            <ambient>0.13 0.14 0.16 1</ambient>
+            <diffuse>0.14 0.15 0.17 1</diffuse>
+            <specular>0.25 0.25 0.25 1</specular>
+          </material>
+        </visual>
+
+        <!-- Safety Hazard Yellow/Black Perimeter Border around Net Base -->
+        <visual name="border_n"><pose>0 7.1 0.003 0 0 0</pose><geometry><box><size>14.2 0.18 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
+        <visual name="border_s"><pose>0 -7.1 0.003 0 0 0</pose><geometry><box><size>14.2 0.18 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
+        <visual name="border_e"><pose>7.1 0 0.003 0 0 0</pose><geometry><box><size>0.18 14.2 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
+        <visual name="border_w"><pose>-7.1 0 0.003 0 0 0</pose><geometry><box><size>0.18 14.2 0.001</size></box></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
+
+        <!-- Metric Optical Tracking Grid (1m grid lines spanning entire flight arena) -->
+        <!-- Longitudinal lines (X-axis) -->
+        <visual name="gx_m6"><pose>-6 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_m5"><pose>-5 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_m4"><pose>-4 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_m3"><pose>-3 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_m2"><pose>-2 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_m1"><pose>-1 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_0"><pose>0 0 0.002 0 0 0</pose><geometry><box><size>0.05 14.0 0.001</size></box></geometry><material><ambient>0.85 0.9 0.95 1</ambient><diffuse>0.85 0.9 0.95 1</diffuse></material></visual>
+        <visual name="gx_p1"><pose>1 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_p2"><pose>2 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_p3"><pose>3 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_p4"><pose>4 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_p5"><pose>5 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gx_p6"><pose>6 0 0.002 0 0 0</pose><geometry><box><size>0.025 14.0 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+
+        <!-- Lateral lines (Y-axis) -->
+        <visual name="gy_m6"><pose>0 -6 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_m5"><pose>0 -5 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_m4"><pose>0 -4 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_m3"><pose>0 -3 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_m2"><pose>0 -2 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_m1"><pose>0 -1 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_0"><pose>0 0 0.002 0 0 0</pose><geometry><box><size>14.0 0.05 0.001</size></box></geometry><material><ambient>0.85 0.9 0.95 1</ambient><diffuse>0.85 0.9 0.95 1</diffuse></material></visual>
+        <visual name="gy_p1"><pose>0 1 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_p2"><pose>0 2 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_p3"><pose>0 3 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_p4"><pose>0 4 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_p5"><pose>0 5 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+        <visual name="gy_p6"><pose>0 6 0.002 0 0 0</pose><geometry><box><size>14.0 0.025 0.001</size></box></geometry><material><ambient>0.45 0.5 0.55 1</ambient><diffuse>0.45 0.5 0.55 1</diffuse></material></visual>
+
+        <!-- North Laboratory Acoustic Wall -->
+        <collision name="wall_n_col"><pose>0 10.0 2.0 0 0 0</pose><geometry><box><size>24.0 0.25 4.0</size></box></geometry></collision>
+        <visual name="wall_n_v"><pose>0 10.0 2.0 0 0 0</pose><geometry><box><size>24.0 0.25 4.0</size></box></geometry>
+          <material><ambient>0.84 0.86 0.89 1</ambient><diffuse>0.84 0.86 0.89 1</diffuse></material></visual>
+        <visual name="wall_n_kick"><pose>0 9.86 0.15 0 0 0</pose><geometry><box><size>24.0 0.04 0.3</size></box></geometry>
+          <material><ambient>0.18 0.20 0.22 1</ambient><diffuse>0.18 0.20 0.22 1</diffuse></material></visual>
+
+        <!-- Facility Header Banner on North Wall -->
+        <visual name="banner_bg"><pose>0 9.84 3.4 0 0 0</pose><geometry><box><size>14.0 0.02 0.7</size></box></geometry>
+          <material><ambient>0.12 0.32 0.65 1</ambient><diffuse>0.12 0.32 0.65 1</diffuse></material></visual>
+        <visual name="banner_stripe"><pose>0 9.83 3.08 0 0 0</pose><geometry><box><size>14.0 0.01 0.05</size></box></geometry>
+          <material><ambient>0.95 0.75 0.1 1</ambient><diffuse>0.95 0.75 0.1 1</diffuse></material></visual>
+
+        <!-- 6-Meter Research Whiteboard -->
+        <visual name="wb_frame"><pose>0 9.84 1.8 0 0 0</pose><geometry><box><size>6.2 0.04 1.8</size></box></geometry>
+          <material><ambient>0.3 0.3 0.3 1</ambient><diffuse>0.3 0.3 0.3 1</diffuse></material></visual>
+        <visual name="wb_surface"><pose>0 9.82 1.8 0 0 0</pose><geometry><box><size>6.08 0.02 1.68</size></box></geometry>
+          <material><ambient>0.96 0.96 0.96 1</ambient><diffuse>0.96 0.96 0.96 1</diffuse></material></visual>
+        <visual name="wb_header"><pose>0 9.80 2.4 0 0 0</pose><geometry><box><size>5.6 0.01 0.12</size></box></geometry>
+          <material><ambient>0.1 0.35 0.75 1</ambient><diffuse>0.1 0.35 0.75 1</diffuse></material></visual>
+        <visual name="wb_f1"><pose>-1.6 9.80 1.9 0 0 0</pose><geometry><box><size>2.2 0.01 0.10</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual>
+        <visual name="wb_f2"><pose>-1.6 9.80 1.5 0 0 0</pose><geometry><box><size>2.0 0.01 0.10</size></box></geometry>
+          <material><ambient>0.85 0.1 0.1 1</ambient><diffuse>0.85 0.1 0.1 1</diffuse></material></visual>
+        <visual name="wb_diagram"><pose>1.6 9.80 1.7 0 0 0</pose><geometry><box><size>2.0 0.01 0.8</size></box></geometry>
+          <material><ambient>0.15 0.6 0.3 1</ambient><diffuse>0.15 0.6 0.3 1</diffuse></material></visual>
+
+        <!-- East Wall -->
+        <collision name="wall_e_col"><pose>11.5 0 1.5 0 0 0</pose><geometry><box><size>0.25 20.0 3.0</size></box></geometry></collision>
+        <visual name="wall_e_v"><pose>11.5 0 1.5 0 0 0</pose><geometry><box><size>0.25 20.0 3.0</size></box></geometry>
+          <material><ambient>0.82 0.84 0.87 1</ambient><diffuse>0.82 0.84 0.87 1</diffuse></material></visual>
+
+        <!-- West Wall -->
+        <collision name="wall_w_col"><pose>-11.5 0 1.5 0 0 0</pose><geometry><box><size>0.25 20.0 3.0</size></box></geometry></collision>
+        <visual name="wall_w_v"><pose>-11.5 0 1.5 0 0 0</pose><geometry><box><size>0.25 20.0 3.0</size></box></geometry>
+          <material><ambient>0.82 0.84 0.87 1</ambient><diffuse>0.82 0.84 0.87 1</diffuse></material></visual>
+
+        <!-- South Safety Observation Railing (Low Front View) -->
+        <collision name="rail_s_col"><pose>0 -10.5 0.5 0 0 0</pose><geometry><box><size>23.0 0.2 1.0</size></box></geometry></collision>
+        <visual name="rail_s_v"><pose>0 -10.5 0.5 0 0 0</pose><geometry><box><size>23.0 0.2 1.0</size></box></geometry>
+          <material><ambient>0.25 0.27 0.30 1</ambient><diffuse>0.25 0.27 0.30 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ==================== DRONE SAFETY FLIGHT NET CAGE (14m x 14m x 6.0m) ==================== -->
+    <model name="drone_flight_net_cage">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="link">
+
+        <!-- 4 Heavy-Duty Corner Aluminum Box-Truss Columns (6.0m Tall) -->
+        <!-- Post NE -->
+        <collision name="t_ne_col"><pose>7.0 7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry></collision>
+        <visual name="t_ne"><pose>7.0 7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse><specular>0.7 0.7 0.7 1</specular></material></visual>
+        <!-- Post NW -->
+        <collision name="t_nw_col"><pose>-7.0 7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry></collision>
+        <visual name="t_nw"><pose>-7.0 7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse><specular>0.7 0.7 0.7 1</specular></material></visual>
+        <!-- Post SE -->
+        <collision name="t_se_col"><pose>7.0 -7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry></collision>
+        <visual name="t_se"><pose>7.0 -7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse><specular>0.7 0.7 0.7 1</specular></material></visual>
+        <!-- Post SW -->
+        <collision name="t_sw_col"><pose>-7.0 -7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry></collision>
+        <visual name="t_sw"><pose>-7.0 -7.0 3.0 0 0 0</pose><geometry><box><size>0.25 0.25 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse><specular>0.7 0.7 0.7 1</specular></material></visual>
+
+        <!-- 4 Intermediate Support Truss Columns -->
+        <visual name="t_mid_n"><pose>0 7.0 3.0 0 0 0</pose><geometry><box><size>0.15 0.15 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+        <visual name="t_mid_s"><pose>0 -7.0 3.0 0 0 0</pose><geometry><box><size>0.15 0.15 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+        <visual name="t_mid_e"><pose>7.0 0 3.0 0 0 0</pose><geometry><box><size>0.15 0.15 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+        <visual name="t_mid_w"><pose>-7.0 0 3.0 0 0 0</pose><geometry><box><size>0.15 0.15 6.0</size></box></geometry>
+          <material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+
+        <!-- Top Perimeter Truss Ring (z = 6.0m) -->
+        <collision name="truss_ring_n"><pose>0 7.0 6.0 0 0 0</pose><geometry><box><size>14.25 0.25 0.25</size></box></geometry></collision>
+        <visual name="truss_rn"><pose>0 7.0 6.0 0 0 0</pose><geometry><box><size>14.25 0.25 0.25</size></box></geometry><material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+
+        <collision name="truss_ring_s"><pose>0 -7.0 6.0 0 0 0</pose><geometry><box><size>14.25 0.25 0.25</size></box></geometry></collision>
+        <visual name="truss_rs"><pose>0 -7.0 6.0 0 0 0</pose><geometry><box><size>14.25 0.25 0.25</size></box></geometry><material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+
+        <collision name="truss_ring_e"><pose>7.0 0 6.0 0 0 0</pose><geometry><box><size>0.25 14.25 0.25</size></box></geometry></collision>
+        <visual name="truss_re"><pose>7.0 0 6.0 0 0 0</pose><geometry><box><size>0.25 14.25 0.25</size></box></geometry><material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+
+        <collision name="truss_ring_w"><pose>-7.0 0 6.0 0 0 0</pose><geometry><box><size>0.25 14.25 0.25</size></box></geometry></collision>
+        <visual name="truss_rw"><pose>-7.0 0 6.0 0 0 0</pose><geometry><box><size>0.25 14.25 0.25</size></box></geometry><material><ambient>0.75 0.77 0.80 1</ambient><diffuse>0.75 0.77 0.80 1</diffuse></material></visual>
+
+        <!-- ==================== DRONE SAFETY FLIGHT NETTING ==================== -->
+        <!-- North Net Wall (14m wide x 5.9m high) -->
+        <visual name="net_north"><pose>0 6.98 2.95 0 0 0</pose><geometry><box><size>13.8 0.01 5.9</size></box></geometry>
+          <material>
+            <ambient>0.15 0.17 0.20 0.26</ambient>
+            <diffuse>0.15 0.17 0.20 0.26</diffuse>
+          </material>
+        </visual>
+
+        <!-- East Net Wall -->
+        <visual name="net_east"><pose>6.98 0 2.95 0 0 0</pose><geometry><box><size>0.01 13.8 5.9</size></box></geometry>
+          <material>
+            <ambient>0.15 0.17 0.20 0.26</ambient>
+            <diffuse>0.15 0.17 0.20 0.26</diffuse>
+          </material>
+        </visual>
+
+        <!-- West Net Wall -->
+        <visual name="net_west"><pose>-6.98 0 2.95 0 0 0</pose><geometry><box><size>0.01 13.8 5.9</size></box></geometry>
+          <material>
+            <ambient>0.15 0.17 0.20 0.26</ambient>
+            <diffuse>0.15 0.17 0.20 0.26</diffuse>
+          </material>
+        </visual>
+
+        <!-- South Net Wall (Facing Operator Console - Clear Safety Mesh) -->
+        <visual name="net_south"><pose>0 -6.98 2.95 0 0 0</pose><geometry><box><size>13.8 0.01 5.9</size></box></geometry>
+          <material>
+            <ambient>0.18 0.20 0.22 0.20</ambient>
+            <diffuse>0.18 0.20 0.22 0.20</diffuse>
+          </material>
+        </visual>
+
+        <!-- Top Overhead Netting (z = 5.98m) -->
+        <visual name="net_top"><pose>0 0 5.98 0 0 0</pose><geometry><box><size>13.8 13.8 0.01</size></box></geometry>
+          <material>
+            <ambient>0.15 0.17 0.20 0.18</ambient>
+            <diffuse>0.15 0.17 0.20 0.18</diffuse>
+          </material>
+        </visual>
+
+        <!-- Net Steel Tension Cables (Horizontal Ribs at 2m and 4m) -->
+        <visual name="cab_n1"><pose>0 6.97 2.0 0 0 0</pose><geometry><box><size>13.8 0.02 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_n2"><pose>0 6.97 4.0 0 0 0</pose><geometry><box><size>13.8 0.02 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_s1"><pose>0 -6.97 2.0 0 0 0</pose><geometry><box><size>13.8 0.02 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_s2"><pose>0 -6.97 4.0 0 0 0</pose><geometry><box><size>13.8 0.02 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_e1"><pose>6.97 0 2.0 0 0 0</pose><geometry><box><size>0.02 13.8 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_e2"><pose>6.97 0 4.0 0 0 0</pose><geometry><box><size>0.02 13.8 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_w1"><pose>-6.97 0 2.0 0 0 0</pose><geometry><box><size>0.02 13.8 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="cab_w2"><pose>-6.97 0 4.0 0 0 0</pose><geometry><box><size>0.02 13.8 0.02</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+
+        <!-- Net Base Weighted Skirt (z = 0.1m) -->
+        <visual name="skirt_n"><pose>0 6.96 0.1 0 0 0</pose><geometry><box><size>13.9 0.08 0.2</size></box></geometry><material><ambient>0.95 0.75 0 1</ambient><diffuse>0.95 0.75 0 1</diffuse></material></visual>
+        <visual name="skirt_s"><pose>0 -6.96 0.1 0 0 0</pose><geometry><box><size>13.9 0.08 0.2</size></box></geometry><material><ambient>0.95 0.75 0 1</ambient><diffuse>0.95 0.75 0 1</diffuse></material></visual>
+        <visual name="skirt_e"><pose>6.96 0 0.1 0 0 0</pose><geometry><box><size>0.08 13.9 0.2</size></box></geometry><material><ambient>0.95 0.75 0 1</ambient><diffuse>0.95 0.75 0 1</diffuse></material></visual>
+        <visual name="skirt_w"><pose>-6.96 0 0.1 0 0 0</pose><geometry><box><size>0.08 13.9 0.2</size></box></geometry><material><ambient>0.95 0.75 0 1</ambient><diffuse>0.95 0.75 0 1</diffuse></material></visual>
+
+        <!-- ==================== 16 OptiTrack / Vicon MoCap Cameras ==================== -->
+        <!-- Cam 1 (NE Upper) -->
+        <visual name="c1_b"><pose>6.8 6.8 5.8 0 0.5 -2.356</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c1_ir"><pose>6.7 6.7 5.7 0 0.5 -2.356</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 2 (NW Upper) -->
+        <visual name="c2_b"><pose>-6.8 6.8 5.8 0 0.5 -0.785</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c2_ir"><pose>-6.7 6.7 5.7 0 0.5 -0.785</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 3 (SE Upper) -->
+        <visual name="c3_b"><pose>6.8 -6.8 5.8 0 0.5 2.356</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c3_ir"><pose>6.7 -6.7 5.7 0 0.5 2.356</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 4 (SW Upper) -->
+        <visual name="c4_b"><pose>-6.8 -6.8 5.8 0 0.5 0.785</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c4_ir"><pose>-6.7 -6.7 5.7 0 0.5 0.785</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 5 (North Mid Upper) -->
+        <visual name="c5_b"><pose>0 6.85 5.8 0.5 0 -1.5708</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c5_ir"><pose>0 6.75 5.7 0.5 0 -1.5708</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 6 (South Mid Upper) -->
+        <visual name="c6_b"><pose>0 -6.85 5.8 -0.5 0 1.5708</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c6_ir"><pose>0 -6.75 5.7 -0.5 0 1.5708</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 7 (East Mid Upper) -->
+        <visual name="c7_b"><pose>6.85 0 5.8 0 0.5 3.1415</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c7_ir"><pose>6.75 0 5.7 0 0.5 3.1415</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 8 (West Mid Upper) -->
+        <visual name="c8_b"><pose>-6.85 0 5.8 0 0.5 0</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c8_ir"><pose>-6.75 0 5.7 0 0.5 0</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 9 (North 1/4 Upper) -->
+        <visual name="c9_b"><pose>3.5 6.85 5.8 0.5 0 -1.8</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c9_ir"><pose>3.45 6.75 5.7 0.5 0 -1.8</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 10 (North 3/4 Upper) -->
+        <visual name="c10_b"><pose>-3.5 6.85 5.8 0.5 0 -1.3</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c10_ir"><pose>-3.45 6.75 5.7 0.5 0 -1.3</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 11 (South 1/4 Upper) -->
+        <visual name="c11_b"><pose>3.5 -6.85 5.8 -0.5 0 1.8</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c11_ir"><pose>3.45 -6.75 5.7 -0.5 0 1.8</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 12 (South 3/4 Upper) -->
+        <visual name="c12_b"><pose>-3.5 -6.85 5.8 -0.5 0 1.3</pose><geometry><box><size>0.20 0.14 0.14</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c12_ir"><pose>-3.45 -6.75 5.7 -0.5 0 1.3</pose><geometry><cylinder><radius>0.05</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <!-- Cam 13..16 (Mid-Tier Inward Cameras at z = 3.0m) -->
+        <visual name="c13_b"><pose>6.85 3.5 3.0 0 0.25 2.8</pose><geometry><box><size>0.18 0.12 0.12</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c13_ir"><pose>6.75 3.4 2.95 0 0.25 2.8</pose><geometry><cylinder><radius>0.045</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <visual name="c14_b"><pose>6.85 -3.5 3.0 0 0.25 -2.8</pose><geometry><box><size>0.18 0.12 0.12</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c14_ir"><pose>6.75 -3.4 2.95 0 0.25 -2.8</pose><geometry><cylinder><radius>0.045</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <visual name="c15_b"><pose>-6.85 3.5 3.0 0 0.25 0.35</pose><geometry><box><size>0.18 0.12 0.12</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c15_ir"><pose>-6.75 3.4 2.95 0 0.25 0.35</pose><geometry><cylinder><radius>0.045</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+
+        <visual name="c16_b"><pose>-6.85 -3.5 3.0 0 0.25 -0.35</pose><geometry><box><size>0.18 0.12 0.12</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <visual name="c16_ir"><pose>-6.75 -3.4 2.95 0 0.25 -0.35</pose><geometry><cylinder><radius>0.045</radius><length>0.02</length></cylinder></geometry><material><ambient>1 0.05 0.05 1</ambient><diffuse>1 0.05 0.05 1</diffuse><emissive>1 0.05 0.05 1</emissive></material></visual>
+      </link>
+    </model>
+
+    <!-- ==================== Primary Central Launch & Landing Pad A (Centered at 0, 0) ==================== -->
+    <model name="primary_helipad_a">
+      <static>true</static>
+      <pose>0 0 0.005 0 0 0</pose>
+      <link name="link">
+        <collision name="pad_col">
+          <geometry><cylinder><radius>1.2</radius><length>0.01</length></cylinder></geometry>
+        </collision>
+
+        <!-- Base Platform -->
+        <visual name="base_plate">
+          <geometry><cylinder><radius>1.2</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>0.12 0.14 0.16 1</ambient><diffuse>0.12 0.14 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- Outer Precision Ring (Cyan) -->
+        <visual name="outer_cyan_ring">
+          <pose>0 0 0.001 0 0 0</pose>
+          <geometry><cylinder><radius>1.14</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>0 0.75 0.95 1</ambient><diffuse>0 0.75 0.95 1</diffuse></material>
+        </visual>
+
+        <!-- Intermediate Dark Ring -->
+        <visual name="mid_dark_ring">
+          <pose>0 0 0.002 0 0 0</pose>
+          <geometry><cylinder><radius>1.02</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>0.12 0.14 0.16 1</ambient><diffuse>0.12 0.14 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- Inner Touchdown Ring (White) -->
+        <visual name="inner_white_ring">
+          <pose>0 0 0.003 0 0 0</pose>
+          <geometry><cylinder><radius>0.88</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
+        </visual>
+
+        <!-- Center Deck Platform -->
+        <visual name="center_deck">
+          <pose>0 0 0.004 0 0 0</pose>
+          <geometry><cylinder><radius>0.80</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>0.15 0.17 0.20 1</ambient><diffuse>0.15 0.17 0.20 1</diffuse></material>
+        </visual>
+
+        <!-- Optical Crosshair Calibration Reticle -->
+        <visual name="crosshair_x"><pose>0 0 0.005 0 0 0</pose><geometry><box><size>1.8 0.035 0.01</size></box></geometry><material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material></visual>
+        <visual name="crosshair_y"><pose>0 0 0.005 0 0 0</pose><geometry><box><size>0.035 1.8 0.01</size></box></geometry><material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material></visual>
+
+        <!-- Bold Yellow "H" Marking -->
+        <visual name="h_bar_l"><pose>0 0.26 0.006 0 0 0</pose><geometry><box><size>0.70 0.11 0.01</size></box></geometry><material><ambient>1 0.85 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
+        <visual name="h_bar_r"><pose>0 -0.26 0.006 0 0 0</pose><geometry><box><size>0.70 0.11 0.01</size></box></geometry><material><ambient>1 0.85 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
+        <visual name="h_cross"><pose>0 0 0.006 0 0 0</pose><geometry><box><size>0.11 0.52 0.01</size></box></geometry><material><ambient>1 0.85 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
+
+        <!-- North Alignment Arrow (Safety Orange) -->
+        <visual name="arrow_stem"><pose>0.96 0 0.006 0 0 0</pose><geometry><box><size>0.26 0.07 0.01</size></box></geometry><material><ambient>0.95 0.4 0 1</ambient><diffuse>0.95 0.4 0 1</diffuse></material></visual>
+        <visual name="arrow_head"><pose>1.08 0 0.006 0 0 0.785</pose><geometry><box><size>0.14 0.14 0.01</size></box></geometry><material><ambient>0.95 0.4 0 1</ambient><diffuse>0.95 0.4 0 1</diffuse></material></visual>
+
+        <!-- 4 Optical ArUco / Target Alignment Squares -->
+        <visual name="tag_ne"><pose>0.72 0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
+        <visual name="tag_nw"><pose>0.72 -0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
+        <visual name="tag_se"><pose>-0.72 0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
+        <visual name="tag_sw"><pose>-0.72 -0.72 0.005 0 0 0</pose><geometry><box><size>0.16 0.16 0.01</size></box></geometry><material><ambient>0 0.8 1 1</ambient><diffuse>0 0.8 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ==================== Clean Ground Station Outside the Net ==================== -->
+    <model name="ground_control_center">
+      <static>true</static>
+      <pose>0 -8.5 0 0 0 0</pose>
+      <link name="link">
+        <!-- Workstation Desk -->
+        <collision name="desk_top_col"><pose>0 0 0.75 0 0 0</pose><geometry><box><size>4.5 0.9 0.05</size></box></geometry></collision>
+        <visual name="desk_top_v"><pose>0 0 0.75 0 0 0</pose><geometry><box><size>4.5 0.9 0.05</size></box></geometry>
+          <material><ambient>0.88 0.90 0.92 1</ambient><diffuse>0.88 0.90 0.92 1</diffuse></material></visual>
+
+        <!-- Desk Legs -->
+        <visual name="leg_1"><pose>2.1 0.38 0.36 0 0 0</pose><geometry><cylinder><radius>0.035</radius><length>0.72</length></cylinder></geometry><material><ambient>0.2 0.22 0.25 1</ambient><diffuse>0.2 0.22 0.25 1</diffuse></material></visual>
+        <visual name="leg_2"><pose>-2.1 0.38 0.36 0 0 0</pose><geometry><cylinder><radius>0.035</radius><length>0.72</length></cylinder></geometry><material><ambient>0.2 0.22 0.25 1</ambient><diffuse>0.2 0.22 0.25 1</diffuse></material></visual>
+        <visual name="leg_3"><pose>2.1 -0.38 0.36 0 0 0</pose><geometry><cylinder><radius>0.035</radius><length>0.72</length></cylinder></geometry><material><ambient>0.2 0.22 0.25 1</ambient><diffuse>0.2 0.22 0.25 1</diffuse></material></visual>
+        <visual name="leg_4"><pose>-2.1 -0.38 0.36 0 0 0</pose><geometry><cylinder><radius>0.035</radius><length>0.72</length></cylinder></geometry><material><ambient>0.2 0.22 0.25 1</ambient><diffuse>0.2 0.22 0.25 1</diffuse></material></visual>
+
+        <!-- 3 Flight Monitors -->
+        <!-- Center Monitor: 3D Flight View -->
+        <visual name="m1_body"><pose>0 0.1 1.1 0 0 0</pose><geometry><box><size>0.80 0.04 0.45</size></box></geometry><material><ambient>0.1 0.1 0.12 1</ambient><diffuse>0.1 0.1 0.12 1</diffuse></material></visual>
+        <visual name="m1_screen"><pose>0 0.075 1.1 0 0 0</pose><geometry><box><size>0.76 0.01 0.41</size></box></geometry>
+          <material><ambient>0.1 0.35 0.65 1</ambient><diffuse>0.1 0.35 0.65 1</diffuse><emissive>0.1 0.45 0.8 1</emissive></material></visual>
+
+        <!-- Left Monitor: Telemetry HUD -->
+        <visual name="m2_body"><pose>-1.1 0.15 1.1 0 0 0.22</pose><geometry><box><size>0.80 0.04 0.45</size></box></geometry><material><ambient>0.1 0.1 0.12 1</ambient><diffuse>0.1 0.1 0.12 1</diffuse></material></visual>
+        <visual name="m2_screen"><pose>-1.09 0.125 1.1 0 0 0.22</pose><geometry><box><size>0.76 0.01 0.41</size></box></geometry>
+          <material><ambient>0.15 0.5 0.25 1</ambient><diffuse>0.15 0.5 0.25 1</diffuse><emissive>0.1 0.55 0.3 1</emissive></material></visual>
+
+        <!-- Right Monitor: Plots -->
+        <visual name="m3_body"><pose>1.1 0.15 1.1 0 0 -0.22</pose><geometry><box><size>0.80 0.04 0.45</size></box></geometry><material><ambient>0.1 0.1 0.12 1</ambient><diffuse>0.1 0.1 0.12 1</diffuse></material></visual>
+        <visual name="m3_screen"><pose>1.09 0.125 1.1 0 0 -0.22</pose><geometry><box><size>0.76 0.01 0.41</size></box></geometry>
+          <material><ambient>0.5 0.3 0.1 1</ambient><diffuse>0.5 0.3 0.1 1</diffuse><emissive>0.6 0.35 0.1 1</emissive></material></visual>
+
+        <!-- Operator Lab Stools -->
+        <visual name="seat_1"><pose>-0.8 -0.55 0.5 0 0 0</pose><geometry><cylinder><radius>0.24</radius><length>0.08</length></cylinder></geometry><material><ambient>0.2 0.25 0.3 1</ambient><diffuse>0.2 0.25 0.3 1</diffuse></material></visual>
+        <visual name="seat_2"><pose>0.8 -0.55 0.5 0 0 0</pose><geometry><cylinder><radius>0.24</radius><length>0.08</length></cylinder></geometry><material><ambient>0.2 0.25 0.3 1</ambient><diffuse>0.2 0.25 0.3 1</diffuse></material></visual>
+
+        <!-- Emergency Stop Pedestal -->
+        <collision name="estop_col"><pose>-2.7 0 0.5 0 0 0</pose><geometry><cylinder><radius>0.14</radius><length>1.0</length></cylinder></geometry></collision>
+        <visual name="estop_ped"><pose>-2.7 0 0.5 0 0 0</pose><geometry><cylinder><radius>0.14</radius><length>1.0</length></cylinder></geometry><material><ambient>0.95 0.8 0 1</ambient><diffuse>0.95 0.8 0 1</diffuse></material></visual>
+        <visual name="estop_btn"><pose>-2.7 0 1.03 0 0 0</pose><geometry><cylinder><radius>0.09</radius><length>0.06</length></cylinder></geometry>
+          <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse><emissive>0.7 0.05 0.05 1</emissive></material></visual>
+      </link>
+    </model>
+
+    <!-- ==================== The Bi-Copter Drone Model (Spawns on Central Pad) ==================== -->
+    <include>
+      <uri>model://bi_copter</uri>
+      <name>bi_copter</name>
+      <pose>0 0 0.045 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>

@@ -1,0 +1,55 @@
+# ==============================================================================
+# PX4 PARAMETER EXPORT FILE (QGroundControl Ready)
+# ==============================================================================
+#
+# Hey there! This is a standardized PX4 parameter file for our bi-copter.
+#
+# How to use this in QGroundControl:
+# 1. Connect your drone (or launch SITL simulation).
+# 2. In QGroundControl, click the "Q" icon -> Vehicle Setup (Gears icon) -> Parameters.
+# 3. Click "Tools" in the top right corner -> "Load from file...".
+# 4. Select this file (`bicopter.params`).
+# 5. Click "Reboot Vehicle" when prompted.
+#
+# All actuator geometry, servo tilt mappings, and flight PID gains will be
+# loaded into the autopilot instantly!
+# ==============================================================================
+# Vehicle: bi_copter
+# Control Allocator: Multirotor with Tilt (CA_AIRFRAME = 8)
+1	1	CA_AIRFRAME	8	6
+1	1	CA_ROTOR_COUNT	2	6
+1	1	CA_SV_TL_COUNT	2	6
+1	1	CA_ROTOR0_PX	0.0	9
+1	1	CA_ROTOR0_PY	0.161	9
+1	1	CA_ROTOR0_PZ	0.085	9
+1	1	CA_ROTOR0_AX	0.0	9
+1	1	CA_ROTOR0_AY	0.0	9
+1	1	CA_ROTOR0_AZ	-1.0	9
+1	1	CA_ROTOR0_KM	0.016	9
+1	1	CA_ROTOR0_TILT	1	6
+1	1	CA_ROTOR1_PX	0.0	9
+1	1	CA_ROTOR1_PY	-0.161	9
+1	1	CA_ROTOR1_PZ	0.085	9
+1	1	CA_ROTOR1_AX	0.0	9
+1	1	CA_ROTOR1_AY	0.0	9
+1	1	CA_ROTOR1_AZ	-1.0	9
+1	1	CA_ROTOR1_KM	-0.016	9
+1	1	CA_ROTOR1_TILT	2	6
+1	1	CA_SV_TL0_CT	3	6
+1	1	CA_SV_TL0_MINA	-30.0	9
+1	1	CA_SV_TL0_MAXA	30.0	9
+1	1	CA_SV_TL1_CT	3	6
+1	1	CA_SV_TL1_MINA	-30.0	9
+1	1	CA_SV_TL1_MAXA	30.0	9
+1	1	MC_ROLLRATE_P	0.12	9
+1	1	MC_ROLLRATE_I	0.08	9
+1	1	MC_ROLLRATE_D	0.003	9
+1	1	MC_ROLL_P	6.0	9
+1	1	MC_PITCHRATE_P	0.10	9
+1	1	MC_PITCHRATE_I	0.06	9
+1	1	MC_PITCHRATE_D	0.002	9
+1	1	MC_PITCH_P	5.0	9
+1	1	MC_YAWRATE_P	0.15	9
+1	1	MC_YAWRATE_I	0.05	9
+1	1	MC_YAWRATE_D	0.0	9
+1	1	MC_YAW_P	2.5	9

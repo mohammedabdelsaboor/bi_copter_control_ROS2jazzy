@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+================================================================================
+BI-COPTER ROBOT DESCRIPTION (URDF Model for ROS 2 & RViz2)
+================================================================================
+
+Hello! This URDF (Unified Robot Description Format) file defines the complete
+kinematic tree, mass distribution, visual meshes, and collision geometry of our
+dual-tilt bi-copter drone.
+
+Vehicle Coordinate Convention (ROS Standard FLU):
+- +X: Forward (along the central fuselage rod)
+- +Y: Left (along the transverse motor arm)
+- +Z: Up (perpendicular to the frame)
+
+Actuator Kinematic Breakdown:
+1. Fuselage & Frame:
+   - `base_footprint`: Root link for KDL tree kinematic parsers.
+   - `base_link`: Main 650 mm longitudinal carbon fiber fuselage rod.
+   - `frame_link`: Central cross bracket rigidly attached to the rod.
+
+2. Tilting Servos (Revolute joints about +Y axis):
+   - `left_tilt_link`  / `left_tilt_joint` : Left motor mount (tilts ±30°).
+   - `right_tilt_link` / `right_tilt_joint`: Right motor mount (tilts ±30°).
+   * Positive angle tilts the thrust vector forward (+X).
+
+3. Aerodynamic Thrusters (Continuous joints):
+   - `left_prop_link`  / `left_prop_joint` : Motor 0 (10x5.5 prop, CCW rotation).
+   - `right_prop_link` / `right_prop_joint`: Motor 1 (10x5.5 prop, CW rotation).
+
+Origin & CAD Correspondence:
+Derived from the SolidWorks CAD assembly ("link assem 1.urdf") with precise
+inertias calculated from physical material densities (total drone mass ~0.481 kg).
+================================================================================
+-->
+<robot name="bi_copter">
+
+  <!-- ===================== base_footprint (dummy root for KDL parser) ===================== -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- ===================== base_link : 650 mm rod ===================== -->
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.132323882569202"/>
+      <inertia ixx="1.90877200606074E-05" ixy="0" ixz="0"
+               iyy="0.00466844722548764" iyz="0" izz="0.00466844722548764"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bi_copter_control/meshes/base_link.STL"/>
+      </geometry>
+      <material name="rod">
+        <color rgba="0.898 0.918 0.930 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5707963267949 0"/>
+      <geometry>
+        <cylinder radius="0.0125" length="0.65"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ===================== frame_link : central bracket (L1) ===================== -->
+  <link name="frame_link">
+    <inertial>
+      <origin xyz="0.0187826477090622 0.0646496990402858 0.0655243998826831" rpy="0 0 0"/>
+      <mass value="0.177641248758178"/>
+      <inertia ixx="0.000214711885739995" ixy="0" ixz="0"
+               iyy="0.000218978934528565" iyz="0" izz="8.14312338807093E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bi_copter_control/meshes/L1.STL"/>
+      </geometry>
+      <material name="frame">
+        <color rgba="0.792 0.820 0.933 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0188 0.0563 0.0660" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.080 0.108 0.380"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="frame_joint" type="fixed">
+    <origin xyz="-0.0188267545319353 0.0657121173114694 -0.0323300324222666" rpy="1.5707963267949 0 0"/>
+    <parent link="base_link"/>
+    <child link="frame_link"/>
+  </joint>
+
+  <!-- ===================== left tilt (servo) : L2 ===================== -->
+  <link name="left_tilt_link">
+    <inertial>
+      <origin xyz="0.000639451801211969 0.0419854704930056 0.0202856147814962" rpy="0 0 0"/>
+      <mass value="0.0756917660219552"/>
+      <inertia ixx="1.36003088872351E-05" ixy="-3.48905222525505E-07" ixz="-6.71026377493094E-07"
+               iyy="1.61394826592292E-05" iyz="-1.5868331703718E-07" izz="1.35431982502197E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bi_copter_control/meshes/L2.STL"/>
+      </geometry>
+      <material name="bracket">
+        <color rgba="0.753 0.753 0.753 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0095 0.0447 0.0200" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.069 0.114 0.040"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_tilt_joint" type="revolute">
+    <origin xyz="0.0188409419721205 0.100330032422266 -0.0752878826885309" rpy="3.14159265358979 0 3.14159265358979"/>
+    <parent link="frame_link"/>
+    <child link="left_tilt_link"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.5236" upper="0.5236" effort="2.0" velocity="10.0"/>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+  <!-- ===================== right tilt (servo) : L3 ===================== -->
+  <link name="right_tilt_link">
+    <inertial>
+      <origin xyz="0.000642058132076519 0.0419833660785355 0.0197082906269082" rpy="0 0 0"/>
+      <mass value="0.0757054374645909"/>
+      <inertia ixx="1.3602712306349E-05" ixy="-3.49944732585982E-07" ixz="6.81764898257614E-07"
+               iyy="1.61425065106366E-05" iyz="1.62483769950288E-07" izz="1.35454251706912E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bi_copter_control/meshes/L3.STL"/>
+      </geometry>
+      <material name="bracket"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0095 0.0447 0.0200" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.069 0.114 0.040"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="right_tilt_joint" type="revolute">
+    <origin xyz="0.0188125670917499 0.100330032422266 0.246712117311469" rpy="3.14159265358979 0 -3.14159265358979"/>
+    <parent link="frame_link"/>
+    <child link="right_tilt_link"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.5236" upper="0.5236" effort="2.0" velocity="10.0"/>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+  <!-- ===================== left propeller : L4 (CCW seen from above) ===================== -->
+  <link name="left_prop_link">
+    <inertial>
+      <origin xyz="0 0 0.00805127" rpy="0 0 0"/>
+      <mass value="0.00976049064649461"/>
+      <inertia ixx="2.0248e-05" ixy="-3.329e-06" ixz="0"
+               iyy="9.130e-07" iyz="0" izz="2.0957e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5707963267949 0 2.997185"/>
+      <geometry>
+        <mesh filename="package://bi_copter_control/meshes/L4.STL"/>
+      </geometry>
+      <material name="prop">
+        <color rgba="0.15 0.15 0.15 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="left_prop_joint" type="continuous">
+    <origin xyz="0 0.0698434677431831 0.0200004851942814" rpy="-1.5707963267949 0 0"/>
+    <parent link="left_tilt_link"/>
+    <child link="left_prop_link"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- ===================== right propeller : L5 (CW seen from above) ===================== -->
+  <link name="right_prop_link">
+    <inertial>
+      <origin xyz="0 0 0.00805127" rpy="0 0 0"/>
+      <mass value="0.0097605620215964"/>
+      <inertia ixx="2.0796e-05" ixy="-4.378e-07" ixz="0"
+               iyy="3.652e-07" iyz="0" izz="2.0958e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5707963267949 0 -3.14159265358979"/>
+      <geometry>
+        <mesh filename="package://bi_copter_control/meshes/L5.STL"/>
+      </geometry>
+      <material name="prop_r">
+        <color rgba="0.15 0.15 0.15 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="right_prop_joint" type="continuous">
+    <origin xyz="0 0.069843467743183 0.0200004851942814" rpy="-1.5707963267949 0 0"/>
+    <parent link="right_tilt_link"/>
+    <child link="right_prop_link"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+</robot>

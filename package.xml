@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!--
+================================================================================
+BI-COPTER ROS 2 PACKAGE METADATA (package.xml)
+================================================================================
+
+Package Name: bi_copter_control
+Target ROS 2: Jazzy Jalisco (Ubuntu 24.04 LTS)
+Simulator:    Gazebo Sim 8 (Harmonic)
+
+This package provides a comprehensive, lean, and production-grade simulation
+and flight control environment for a dual-tilt bi-copter drone. It includes:
+- Gazebo Sim physics, aerodynamics, and joint position controllers.
+- Pure-Python flight stabilization algorithms and actuator allocation matrix.
+- Interactive keyboard teleoperation with live ASCII HUD and Pixhawk ALTCTL.
+- Real-time QGroundControl MAVLink telemetry bridge on UDP 14550.
+- Automated unit test suite with 100% pass rate.
+================================================================================
+-->
+<package format="3">
+  <name>bi_copter_control</name>
+  <version>1.0.0</version>
+  <description>Simulation, PID flight stabilization, and Pixhawk SITL integration for a dual-motor dual-servo tilt-rotor bi-copter in Gazebo Harmonic and RViz2.</description>
+  <maintainer email="mohammedabdelsaboor@gmail.com">sheka</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>teleop_twist_keyboard</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

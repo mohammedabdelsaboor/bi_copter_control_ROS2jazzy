@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+================================================================================
+SOLIDWORKS CAD EXPORT REFERENCE (link assem 1.urdf)
+================================================================================
+Note: This file is the raw SolidWorks export reference from the CAD team.
+The active URDF used by ROS 2, robot_state_publisher, and RViz2 is `bi_copter.urdf`.
+================================================================================
+-->
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="link assem 1">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-2.76532267727628E-16 0 3.51038494709688E-19"
+        rpy="0 0 0" />
+      <mass
+        value="0.132323882569202" />
+      <inertia
+        ixx="1.90877200606074E-05"
+        ixy="-1.24875867876986E-35"
+        ixz="-1.91928080718625E-35"
+        iyy="0.00466844722548764"
+        iyz="-1.84140864182871E-37"
+        izz="0.00466844722548764" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="L1">
+    <inertial>
+      <origin
+        xyz="0.0187826477090622 0.0646496990402858 0.0655243998826831"
+        rpy="0 0 0" />
+      <mass
+        value="0.177641248758178" />
+      <inertia
+        ixx="0.000214711885739995"
+        ixy="2.49321510093631E-20"
+        ixz="-1.2333489977151E-12"
+        iyy="0.000218978934528565"
+        iyz="-2.85669278486103E-10"
+        izz="8.14312338807093E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J1"
+    type="continuous">
+    <origin
+      xyz="-0.0188267545319353 0.0657121173114694 -0.0323300324222666"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="L1" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="L2">
+    <inertial>
+      <origin
+        xyz="0.000639451801211969 0.0419854704930056 0.0202856147814962"
+        rpy="0 0 0" />
+      <mass
+        value="0.0756917660219552" />
+      <inertia
+        ixx="1.36003088872351E-05"
+        ixy="-3.48905222525505E-07"
+        ixz="-6.71026377493094E-07"
+        iyy="1.61394826592292E-05"
+        iyz="-1.5868331703718E-07"
+        izz="1.35431982502197E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J2"
+    type="continuous">
+    <origin
+      xyz="0.0188409419721205 0.100330032422266 -0.0752878826885309"
+      rpy="3.14159265358979 0 3.14159265358979" />
+    <parent
+      link="L1" />
+    <child
+      link="L2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="L4">
+    <inertial>
+      <origin
+        xyz="-4.92945649577248E-09 0.00805127046574106 7.94391442487941E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.00976049064649461" />
+      <inertia
+        ixx="2.07958518710737E-05"
+        ixy="-1.03366210906173E-13"
+        ixz="4.37809832878648E-07"
+        iyy="2.09573775881637E-05"
+        iyz="6.12944090859765E-12"
+        izz="3.65170355995074E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J4"
+    type="continuous">
+    <origin
+      xyz="0 0.0698434677431831 0.0200004851942814"
+      rpy="3.14159265358979 0.144407292596093 3.14159265358979" />
+    <parent
+      link="L2" />
+    <child
+      link="L4" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="L3">
+    <inertial>
+      <origin
+        xyz="0.000642058132076519 0.0419833660785355 0.0197082906269082"
+        rpy="0 0 0" />
+      <mass
+        value="0.0757054374645909" />
+      <inertia
+        ixx="1.3602712306349E-05"
+        ixy="-3.49944732585982E-07"
+        ixz="6.81764898257614E-07"
+        iyy="1.61425065106366E-05"
+        iyz="1.62483769950288E-07"
+        izz="1.35454251706912E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J3"
+    type="continuous">
+    <origin
+      xyz="0.0188125670917499 0.100330032422266 0.246712117311469"
+      rpy="3.14159265358979 0 -3.14159265358979" />
+    <parent
+      link="L1" />
+    <child
+      link="L3" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="L5">
+    <inertial>
+      <origin
+        xyz="-3.23416066990868E-09 0.00805127359033739 7.11040406775609E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.0097605620215964" />
+      <inertia
+        ixx="2.07964259886499E-05"
+        ixy="-5.29046290229536E-14"
+        ixz="4.37840467773984E-07"
+        iyy="2.09579539745188E-05"
+        iyz="5.87368710498402E-12"
+        izz="3.65172671551217E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://link assem 1/meshes/L5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J5"
+    type="continuous">
+    <origin
+      xyz="0 0.069843467743183 0.0200004851942814"
+      rpy="3.14159265358979 0 -3.14159265358979" />
+    <parent
+      link="L3" />
+    <child
+      link="L5" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+</robot>

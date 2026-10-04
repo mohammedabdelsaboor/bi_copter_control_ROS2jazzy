@@ -1,0 +1,94 @@
+#!/bin/sh
+# ==============================================================================
+# PX4 AIRFRAME DEFINITION: DUAL-MOTOR DUAL-SERVO BI-COPTER (SYS_AUTOSTART = 4005)
+# ==============================================================================
+#
+# Hello! This file is the official PX4 Autopilot airframe startup script for
+# our bi-copter drone. In PX4 architecture, each vehicle type has a unique ID
+# (here: 4005) stored in ROMFS under init.d-posix/airframes/.
+#
+# What this file configures:
+# 1. Control Allocator (`CA_AIRFRAME 8`):
+#    Tells PX4 to use the "Multirotor with Tilt" dynamic allocation mixer.
+# 2. Geometry & Positions:
+#    - Rotor 0 (Left, CCW): Located at +0.161 m on the Y axis, linked to Servo 1.
+#    - Rotor 1 (Right, CW): Located at -0.161 m on the Y axis, linked to Servo 2.
+# 3. Servo Angular Range:
+#    - Tilts forward/backward by ±30 degrees for pitch and yaw control.
+# 4. Actuator Output Mapping:
+#    - Motor 1 -> PWM Output 1
+#    - Motor 2 -> PWM Output 2
+#    - Tilt Servo 1 -> PWM Output 3
+#    - Tilt Servo 2 -> PWM Output 4
+# 5. Default PID Gains:
+#    - Tuned specifically for our drone's 0.481 kg mass and rotational inertia.
+# ==============================================================================
+#
+# @name Bi-Copter with 2 Motors and 2 Tilt Servos
+# @type Multirotor with Tilt
+# @class Copter
+# @maintainer sheka <mohammedabdelsaboor@gmail.com>
+#
+
+. ${R}etc/init.d/rc.mc_defaults
+
+# Airframe geometry: Multirotor with Tilt (8)
+param set-default CA_AIRFRAME 8
+param set-default CA_ROTOR_COUNT 2
+param set-default CA_SV_TL_COUNT 2
+
+# Rotor 0 (Left - CCW)
+param set-default CA_ROTOR0_PX 0.0
+param set-default CA_ROTOR0_PY 0.161
+param set-default CA_ROTOR0_PZ 0.085
+param set-default CA_ROTOR0_AX 0.0
+param set-default CA_ROTOR0_AY 0.0
+param set-default CA_ROTOR0_AZ -1.0
+param set-default CA_ROTOR0_KM 0.016
+param set-default CA_ROTOR0_TILT 1
+
+# Rotor 1 (Right - CW)
+param set-default CA_ROTOR1_PX 0.0
+param set-default CA_ROTOR1_PY -0.161
+param set-default CA_ROTOR1_PZ 0.085
+param set-default CA_ROTOR1_AX 0.0
+param set-default CA_ROTOR1_AY 0.0
+param set-default CA_ROTOR1_AZ -1.0
+param set-default CA_ROTOR1_KM -0.016
+param set-default CA_ROTOR1_TILT 2
+
+# Tilt Servo 1 (Left Tilt Servo)
+param set-default CA_SV_TL0_CT 3
+param set-default CA_SV_TL0_MINA -30.0
+param set-default CA_SV_TL0_MAXA 30.0
+
+# Tilt Servo 2 (Right Tilt Servo)
+param set-default CA_SV_TL1_CT 3
+param set-default CA_SV_TL1_MINA -30.0
+param set-default CA_SV_TL1_MAXA 30.0
+
+# PWM / Actuator mapping (standard outputs)
+# Motor 1 -> Actuator output 1
+# Motor 2 -> Actuator output 2
+# Servo 1 -> Actuator output 3
+# Servo 2 -> Actuator output 4
+param set-default PWM_MAIN_FUNC1 101
+param set-default PWM_MAIN_FUNC2 102
+param set-default PWM_MAIN_FUNC3 201
+param set-default PWM_MAIN_FUNC4 202
+
+# Rate PID Gains for Bi-copter (tailored to 0.48 kg inertia)
+param set-default MC_ROLLRATE_P 0.12
+param set-default MC_ROLLRATE_I 0.08
+param set-default MC_ROLLRATE_D 0.003
+param set-default MC_ROLL_P 6.0
+
+param set-default MC_PITCHRATE_P 0.10
+param set-default MC_PITCHRATE_I 0.06
+param set-default MC_PITCHRATE_D 0.002
+param set-default MC_PITCH_P 5.0
+
+param set-default MC_YAWRATE_P 0.15
+param set-default MC_YAWRATE_I 0.05
+param set-default MC_YAWRATE_D 0.0
+param set-default MC_YAW_P 2.5
